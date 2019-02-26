@@ -1,0 +1,12 @@
+This is by far the simplest rdt protocol, even trivial. The reason it's good to learn is because it gets you started on the type of thinking that is assumed for the other more complex protocols.
+
+In rdt 1.0, we assume that the underlying channel is completely reliable. In other words, we don't look into error correction and all that over here.
+Description of the protocol :
+We use two FSMs to represent the states of the sender and receiver machines. This is important to know, that we aren't combining both of them. Also since we have separated the machines, their states are pretty simple to decide. The sender machine will be in the sending state only and the receiver machine will be in the receiving state.
+Now, what are all the actions that happen to a sending machine and what actions does it do? Well, firstly it receives data from the upper layer via an event rdt_send(). Then it creates a packet to hold the data. Finally, it sends the data to the receiver machine.
+What about the receiver machine? This one would first receive the packet from the sending machine via an event rdt_rcv(). Then it extracts the data from the packet. Finally, it sends the data to the upper layer.
+Note that we call rdt_send() and rdt_rcv() events.(well to be fair the others are called events too but I'm trying to show the difference). These actions are different, in that they cause state transition. The others, like create packets, extracting, blah blah are reactions to these events - they are what happens when the event takes place. The reason we don't care too much about a state transition is that there is only one state, so whatever happens it's only option is to stay in that state. That's we draw a curved arrow on itself, to show that it just goes back to itself.
+
+Tidbit - No difference between a unit of data and a packet
+
+Disadvantage - No error correction, it doesn't even try. Just assumes the transportation is perfect.
